@@ -1,9 +1,22 @@
 #!/bin/bash
-echo "Hey there ! lets generate a safe password for you"
-sleep 2
-echo "What should be the length of the password you wish to generate"
-read len
 
-PASS=`date | sha256sum | cut -b 1-$len`
-#basically sha256 will generate hash for the date, so we will be using it to structure the pass
-echo "Your password is $PASS"
+echo "Hey user! Are you planning to generate a password of any length? (yes/no)"
+read resp
+
+if [ "$resp" = "yes" ]; then
+    echo "Choose the length of the password:"
+    read len
+
+    # Validating if input is numeric
+    if ! [[ "$len" =~ ^[0-9]+$ ]]; then
+        echo "Error: Please enter a valid numeric value for password length."
+        exit 1
+    fi
+
+    PASS=$(date | sha256sum | cut -b 1-"$len")
+    echo "$PASS"
+elif [ "$resp" = "no" ]; then
+    echo "Buzz off, mate!"
+else
+    echo "Invalid response. Please enter 'yes' or 'no'."
+fi
